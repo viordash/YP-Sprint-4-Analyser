@@ -15,7 +15,36 @@
                 "--command",
                 "checksum"
             ],
-            "cwd": "${workspaceFolder}/build"
+            "cwd": "${workspaceFolder}/build",
+            "preLaunchTask": "build"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "metric_test",
+            "program": "${workspaceFolder}/build/src/metric_impl/metric_test",
+            "args": [
+                "-i",
+                "input.txt",
+                "--command",
+                "checksum"
+            ],
+            "cwd": "${workspaceFolder}/build",
+            "preLaunchTask": "build"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "metric_accumulator_test",
+            "program": "${workspaceFolder}/build/src/metric_accumulator_impl/metric_accumulator_test",
+            "args": [
+                "-i",
+                "input.txt",
+                "--command",
+                "checksum"
+            ],
+            "cwd": "${workspaceFolder}/build",
+            "preLaunchTask": "build"
         }
 
     ]
