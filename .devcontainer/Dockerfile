@@ -56,5 +56,8 @@ COPY default /home/dev/.conan2/profiles/default
 RUN sudo chown -R dev:dev /home/dev/.conan2
 RUN sudo chmod 666 /home/dev/.conan2/profiles/default
 
+RUN git config --global user.name "Vitalii Orazov"
+RUN git config --global user.email "viordash@yandex.ru"
+
 # Set the default command
 CMD ["/bin/bash"]
