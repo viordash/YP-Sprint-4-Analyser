@@ -1,8 +1,8 @@
 FROM ubuntu@sha256:79efa276fdefa2ee3911db29b0608f8c0561c347ec3f4d4139980d43b168d991
 
 # Update the package database and install required tools
-RUN apt update
-RUN apt install -y python3 python3-pip pipx git less vim sudo cmake make g++-15 clang-format clangd-19 nodejs npm
+RUN apt-get update
+RUN apt-get install -y python3 python3-pip pipx git less vim sudo cmake make g++-15 clang-format clangd-19 nodejs npm
 
 # Update  gcc/g++ version to the latest ones
 RUN ln -fs /usr/bin/g++-15 /usr/bin/g++
@@ -18,7 +18,7 @@ WORKDIR tree-sitter
 RUN ls -la
 RUN make -j4
 RUN sudo make install
-RUN apt install -y cargo
+RUN apt-get install -y cargo
 RUN cargo install tree-sitter-cli --root /usr/local
 ENV PATH="/root/.cargo/bin:${PATH}"
 WORKDIR ..
