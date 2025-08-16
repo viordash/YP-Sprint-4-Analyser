@@ -1,3 +1,12 @@
 {
+    "clangd.fallbackFlags": [
+        "-I${workspaceFolder}/include",
+        "-I${workspaceFolder}/include/metric_accumulator_impl",
+        "-I${workspaceFolder}/include/metric_impl",
+        "-std=c++23"
+    ],
+    "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd",
+    "clangd.path": "/usr/bin/clangd-19",
+    // "clangd.arguments": [ "--compile-commands-dir=${workspaceFolder}/build" ],
     "editor.inlayHints.enabled": "off"
 }
