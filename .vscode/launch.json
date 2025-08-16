@@ -10,12 +10,10 @@
             "name": "Launch Analyser",
             "program": "${workspaceFolder}/build/analyser",
             "args": [
-                "-i",
-                "input.txt",
-                "--command",
-                "checksum"
+                "-f",
+                "files/sample.py",
             ],
-            "cwd": "${workspaceFolder}/build",
+            "cwd": "${workspaceFolder}",
             "preLaunchTask": "build"
         },
         {
@@ -29,7 +27,7 @@
                 "--command",
                 "checksum"
             ],
-            "cwd": "${workspaceFolder}/build",
+            "cwd": "${workspaceFolder}",
             "preLaunchTask": "build"
         },
         {
@@ -43,7 +41,7 @@
                 "--command",
                 "checksum"
             ],
-            "cwd": "${workspaceFolder}/build",
+            "cwd": "${workspaceFolder}",
             "preLaunchTask": "build"
         }
 
