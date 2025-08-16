@@ -21,6 +21,7 @@
 #include "cmd_options.hpp"
 #include "file.hpp"
 #include "function.hpp"
+#include "include/cmd_options.hpp"
 #include "metric.hpp"
 #include "metric_accumulator.hpp"
 #include "metric_accumulator_impl/accumulators.hpp"
