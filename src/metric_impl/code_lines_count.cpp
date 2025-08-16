@@ -42,8 +42,6 @@ std::tuple<int, size_t> get_line_number(std::string_view ast) {
 }  // namespace
 
 MetricResult::ValueType CodeLinesCountMetric::CalculateImpl(const function::Function &f) const {
-    const std::string &ast = f.ast;
-
     auto lines = f.ast | std::views::split('\n')                                        //
                  | std::views::transform([](auto &&r) { return std::string_view{r}; })  //
                  | std::ranges::to<std::vector>();
