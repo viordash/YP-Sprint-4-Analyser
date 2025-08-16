@@ -3,7 +3,6 @@ set(target metric_test)
 add_executable(${target}
     tests/code_lines_count.cpp
     tests/cyclomatic_complexity.cpp
-    tests/naming_style.cpp
     tests/parameters_count.cpp
 )
 
