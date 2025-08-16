@@ -58,7 +58,7 @@ MetricResult::ValueType CodeLinesCountMetric::CalculateImpl(const function::Func
     auto [end_line, end_pos] = get_line_number(rest);
     auto count = end_line - start_line + 1;
 
-    auto comments = lines | std::views::filter([](auto &&str) { return str.contains("comment"); });
+    auto comments = lines | std::views::filter([](auto &&str) { return str.contains("(comment"); });
     auto comments_count = std::ranges::distance(comments.begin(), comments.end());
 
     return count - comments_count;
