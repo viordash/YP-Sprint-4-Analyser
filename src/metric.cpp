@@ -1,34 +1,22 @@
 #include "metric.hpp"
-
-#include <unistd.h>
-
-#include <algorithm>
-#include <any>
-#include <array>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <filesystem>
-#include <fstream>
-#include <functional>
-#include <iostream>
-#include <ranges>
-#include <sstream>
-#include <string>
-#include <variant>
-#include <vector>
-
 #include "function.hpp"
+#include <ranges>
+#include <stdexcept>
+#include <unistd.h>
+#include <vector>
 
 namespace analyser::metric {
 
 void MetricExtractor::RegisterMetric(std::unique_ptr<IMetric> metric) {
-    // здесь ваш код
+    if (metric == nullptr) {
+        throw std::invalid_argument{"metric is null"};
+    }
+    metrics.push_back(std::move(metric));
 }
 
 MetricResults MetricExtractor::Get(const function::Function &func) const {
-    // здесь ваш код
-    return {};
+    auto calculated = metrics | std::views::transform([&](const auto &metric) { return metric->Calculate(func); });
+    return MetricResults(calculated.begin(), calculated.end());
 }
 
 }  // namespace analyser::metric
