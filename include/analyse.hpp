@@ -80,7 +80,8 @@ auto SplitByFiles(const auto &analysis) {
 
 void AccumulateFunctionAnalysis(const auto &analysis,
                                 const analyser::metric_accumulator::MetricsAccumulator &accumulator) {
-    // здесь ваш код
+
+    rs::for_each(analysis, [&](const auto &pair) { accumulator.AccumulateNextFunctionResults(pair.second); });
 }
 
 }  // namespace analyser
