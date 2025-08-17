@@ -27,7 +27,7 @@
                 "--command",
                 "checksum"
             ],
-            "cwd": "${workspaceFolder}/build",
+            "cwd": "${workspaceFolder}/build/src/metric_impl",
             "preLaunchTask": "build"
         },
         {
@@ -41,7 +41,7 @@
                 "--command",
                 "checksum"
             ],
-            "cwd": "${workspaceFolder}/build",
+            "cwd": "${workspaceFolder}",
             "preLaunchTask": "build"
         }
 

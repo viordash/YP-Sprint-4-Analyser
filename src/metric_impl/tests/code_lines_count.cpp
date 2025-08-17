@@ -45,7 +45,7 @@ TEST_P(CodeLinesCountFromTestFiles, from_test_file) {
     ASSERT_EQ(result.value, std::get<1>(GetParam()));
 }
 
-const static std::string filepath = "../src/metric_impl/tests/files/";
+const static std::string filepath = "../../../src/metric_impl/tests/files/";
 INSTANTIATE_TEST_SUITE_P(_, CodeLinesCountFromTestFiles,
                          ::testing::Values(                                        //
                              std::make_tuple(filepath + "comments.py", 4),         //
