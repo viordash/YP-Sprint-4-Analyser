@@ -33,13 +33,11 @@ struct MetricsAccumulator {
             throw std::invalid_argument("No accumulator for metric: " + metric_name);
         }
 
-        auto &accumulator = it->second;
-        accumulator->Finalize();
-
-        auto ptr = std::dynamic_pointer_cast<const Accumulator>(accumulator);
+        auto ptr = std::dynamic_pointer_cast<Accumulator>(it->second);
         if (ptr == nullptr) {
             throw std::runtime_error("Accumulator for " + metric_name + " has incorrect type");
         }
+        ptr->Finalize();
         return *ptr;
     }
 
