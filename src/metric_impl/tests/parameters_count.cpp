@@ -72,6 +72,7 @@ TEST(CountParametersMetricTests, args_and_kwargs) {
     auto result = metric.Calculate(func);
     ASSERT_EQ(result.value, 4);
 }
+
 class CountParametersFromTestFiles : public ::testing::TestWithParam<std::tuple<std::string, int>> {};
 
 TEST_P(CountParametersFromTestFiles, from_test_file) {
