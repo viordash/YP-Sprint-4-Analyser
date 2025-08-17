@@ -13,7 +13,7 @@
                 "-f",
                 "files/sample.py",
             ],
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}/build",
             "preLaunchTask": "build"
         },
         {
@@ -27,7 +27,7 @@
                 "--command",
                 "checksum"
             ],
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}/build",
             "preLaunchTask": "build"
         },
         {
@@ -41,7 +41,7 @@
                 "--command",
                 "checksum"
             ],
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}/build",
             "preLaunchTask": "build"
         }
 
