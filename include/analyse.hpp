@@ -26,9 +26,10 @@ namespace analyser {
 namespace rv = std::ranges::views;
 namespace rs = std::ranges;
 
+using FunctionMetricResultsPair = std::pair<function::Function, metric::MetricResults>;
+
 inline auto AnalyseFunctions(const std::vector<std::string> &files,
                              const analyser::metric::MetricExtractor &metric_extractor) {
-
     function::FunctionExtractor func_extractor;
 
     auto analysis = files                                                                              //
@@ -39,11 +40,25 @@ inline auto AnalyseFunctions(const std::vector<std::string> &files,
                           return std::make_pair(std::forward<decltype(func)>(func), metric_extractor.Get(func));
                       });
 
-    return rs::to<std::vector<std::pair<function::Function, metric::MetricResults>>>(analysis);
+    return rs::to<std::vector<FunctionMetricResultsPair>>(analysis);
 }
 
 auto SplitByClasses(const auto &analysis) {
-    // здесь ваш код
+    auto class_methods = analysis | rv::filter([](const auto &pair) { return pair.first.class_name.has_value(); }) |
+                         rs::to<std::vector>();
+
+    rs::sort(class_methods, {}, [](const auto &pair) { return *pair.first.class_name; });
+
+    auto grouped =
+        class_methods                                                                                            //
+        | rv::chunk_by([](const auto &a, const auto &b) { return *a.first.class_name == *b.first.class_name; })  //
+        | rv::transform([](auto &&chunk) {
+              const auto &class_name = *chunk.front().first.class_name;
+              auto results = rs::to<std::vector>(chunk);
+              return std::make_pair(class_name, std::move(results));
+          });
+    auto grouped_map = grouped | rs::to<std::unordered_map<std::string, std::vector<FunctionMetricResultsPair>>>();
+    return grouped_map;
 }
 
 auto SplitByFiles(const auto &analysis) {
