@@ -1,26 +1,10 @@
 #pragma once
-#include <unistd.h>
-
-#include <algorithm>
-#include <array>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <filesystem>
-#include <fstream>
-#include <functional>
-#include <iostream>
-#include <ranges>
-#include <sstream>
-#include <string>
-#include <variant>
-#include <vector>
-
 #include "metric_accumulator.hpp"
+#include <unistd.h>
 
 namespace analyser::metric_accumulator::metric_accumulator_impl {
 
-struct SumAverageAccumulator : public IAccumulator {
+struct SumAverageAccumulator final : IAccumulator {
     struct SumAverage {
         int sum;
         double average;
@@ -28,9 +12,9 @@ struct SumAverageAccumulator : public IAccumulator {
     };
     void Accumulate(const metric::MetricResult &metric_result) override;
 
-    virtual void Finalize() override;
+    void Finalize() override;
 
-    virtual void Reset() override;
+    void Reset() override;
 
     SumAverage Get() const;
 

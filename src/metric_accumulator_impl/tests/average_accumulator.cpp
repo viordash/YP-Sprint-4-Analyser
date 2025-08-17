@@ -2,8 +2,6 @@
 
 #include <gtest/gtest.h>
 
-#include <cmath>
-
 namespace analyser::metric_accumulator::metric_accumulator_impl::test {
 
 TEST(AverageAccumulatorTests, SingleValue) {
