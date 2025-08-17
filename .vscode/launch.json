@@ -8,41 +8,14 @@
             "type": "lldb",
             "request": "launch",
             "name": "Launch Analyser",
-            "program": "${workspaceFolder}/build/analyser",
-            "args": [
-                "-f",
-                "files/sample.py",
-            ],
-            "cwd": "${workspaceFolder}",
-            "preLaunchTask": "build"
-        },
-        {
-            "type": "lldb",
-            "request": "launch",
-            "name": "metric_test",
-            "program": "${workspaceFolder}/build/src/metric_impl/metric_test",
+            "program": "${workspaceFolder}/build/Analyser",
             "args": [
                 "-i",
                 "input.txt",
                 "--command",
                 "checksum"
             ],
-            "cwd": "${workspaceFolder}/build/src/metric_impl",
-            "preLaunchTask": "build"
-        },
-        {
-            "type": "lldb",
-            "request": "launch",
-            "name": "metric_accumulator_test",
-            "program": "${workspaceFolder}/build/src/metric_accumulator_impl/metric_accumulator_test",
-            "args": [
-                "-i",
-                "input.txt",
-                "--command",
-                "checksum"
-            ],
-            "cwd": "${workspaceFolder}",
-            "preLaunchTask": "build"
+            "cwd": "${workspaceFolder}/build"
         }
 
     ]
