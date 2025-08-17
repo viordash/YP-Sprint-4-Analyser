@@ -72,5 +72,35 @@ TEST(CountParametersMetricTests, args_and_kwargs) {
     auto result = metric.Calculate(func);
     ASSERT_EQ(result.value, 4);
 }
+class CountParametersFromTestFiles : public ::testing::TestWithParam<std::tuple<std::string, int>> {};
+
+TEST_P(CountParametersFromTestFiles, from_test_file) {
+    auto filename = std::get<0>(GetParam());
+    auto count = std::get<1>(GetParam());
+
+    CountParametersMetric metric;
+    function::FunctionExtractor func_extractor;
+    auto file = file::File(std::get<0>(GetParam()));
+
+    auto func = func_extractor.Get(file);
+    ASSERT_EQ(func.size(), 1);
+    auto result = metric.Calculate(func[0]);
+    ASSERT_EQ(result.value, std::get<1>(GetParam()));
+}
+
+const static std::string filepath = "../src/metric_impl/tests/files/";
+INSTANTIATE_TEST_SUITE_P(_, CountParametersFromTestFiles,
+                         ::testing::Values(                                        //
+                             std::make_tuple(filepath + "comments.py", 3),         //
+                             std::make_tuple(filepath + "exceptions.py", 0),       //
+                             std::make_tuple(filepath + "if.py", 1),               //
+                             std::make_tuple(filepath + "loops.py", 1),            //
+                             std::make_tuple(filepath + "many_lines.py", 0),       //
+                             std::make_tuple(filepath + "many_parameters.py", 5),  //
+                             std::make_tuple(filepath + "match_case.py", 1),       //
+                             std::make_tuple(filepath + "nested_if.py", 2),        //
+                             std::make_tuple(filepath + "simple.py", 0),           //
+                             std::make_tuple(filepath + "ternary.py", 1)           //
+                             ));
 
 }  // namespace analyser::metric::metric_impl
