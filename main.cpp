@@ -70,6 +70,24 @@ int main(int argc, char *argv[]) {
             std::println("");
         });
 
+        auto grouped_by_file = analyser::SplitByFiles(analysis_results);
+        std::println("\n--- Grouped by File ---\n");
+        std::ranges::for_each(grouped_by_file, [](const auto &group) {
+            const auto &[filename, results] = group;
+            std::println("File: {}", filename);
+
+            std::ranges::for_each(results, [](const auto &analysis) {
+                const auto &[func, metrics] = analysis;
+                std::println("  Function: {}.{}", func.class_name.has_value() ? *func.class_name : "<global>",
+                             func.name);
+
+                std::ranges::for_each(metrics, [](const auto &result) {
+                    std::println("    - {}: {}", result.metric_name, result.value);
+                });
+            });
+            std::println("");
+        });
+
     } catch (const std::exception &e) {
         std::println(stderr, "Error: {}", e.what());
         return EXIT_FAILURE;

@@ -44,8 +44,9 @@ inline auto AnalyseFunctions(const std::vector<std::string> &files,
 }
 
 auto SplitByClasses(const auto &analysis) {
-    auto class_methods = analysis | rv::filter([](const auto &pair) { return pair.first.class_name.has_value(); }) |
-                         rs::to<std::vector>();
+    auto class_methods = analysis                                                                          //
+                         | rv::filter([](const auto &pair) { return pair.first.class_name.has_value(); })  //
+                         | rs::to<std::vector>();
 
     rs::sort(class_methods, {}, [](const auto &pair) { return *pair.first.class_name; });
 
@@ -62,7 +63,19 @@ auto SplitByClasses(const auto &analysis) {
 }
 
 auto SplitByFiles(const auto &analysis) {
-    // здесь ваш код
+    auto sorted_analysis = rs::to<std::vector>(analysis);
+
+    rs::sort(sorted_analysis, {}, [](const auto &pair) { return pair.first.filename; });
+
+    auto grouped = sorted_analysis                                                                                    //
+                   | rv::chunk_by([](const auto &a, const auto &b) { return a.first.filename == b.first.filename; })  //
+                   | rv::transform([](auto &&chunk) {
+                         const auto &filename = chunk.front().first.filename;
+                         auto results = rs::to<std::vector>(chunk);
+                         return std::make_pair(filename, std::move(results));
+                     });
+    auto grouped_map = grouped | rs::to<std::unordered_map<std::string, std::vector<FunctionMetricResultsPair>>>();
+    return grouped_map;
 }
 
 void AccumulateFunctionAnalysis(const auto &analysis,
