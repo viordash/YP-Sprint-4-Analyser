@@ -1,6 +1,5 @@
 #include "metric_impl/code_lines_count.hpp"
 #include "utils.hpp"
-
 #include <cstddef>
 #include <cstdio>
 #include <cstdlib>
@@ -9,8 +8,8 @@
 #include <stdexcept>
 #include <string>
 #include <string_view>
-#include <tuple>
 #include <unistd.h>
+#include <unordered_set>
 #include <vector>
 
 namespace analyser::metric::metric_impl {
@@ -18,7 +17,7 @@ namespace analyser::metric::metric_impl {
 std::string CodeLinesCountMetric::Name() const { return "CodeLinesCount"; }
 
 namespace {
-std::tuple<int, size_t> get_line_number(std::string_view ast) {
+int get_start_line_number(std::string_view ast) {
     auto start_pos = ast.find('[');
     if (start_pos == std::string::npos) {
         throw std::invalid_argument{"Invalid AST, not found '['"};
@@ -37,7 +36,7 @@ std::tuple<int, size_t> get_line_number(std::string_view ast) {
     std::string_view start_sv(coord_sv.data(), comma_pos);
     int line_number = ToInt(start_sv.substr(0, comma_pos));
 
-    return {line_number, end_pos};
+    return line_number;
 }
 }  // namespace
 
@@ -49,17 +48,13 @@ MetricResult::ValueType CodeLinesCountMetric::CalculateImpl(const function::Func
         throw std::invalid_argument{"Invalid AST, empty string"};
     }
 
-    auto function_definition = lines[0];
-    auto [start_line, start_pos] = get_line_number(function_definition);
-
-    std::string_view rest(function_definition.begin() + start_pos, function_definition.end());
-    auto [end_line, end_pos] = get_line_number(rest);
-    auto count = end_line - start_line + 1;
-
-    auto comments = lines | std::views::filter([](auto &&str) { return str.contains("(comment"); });
-    auto comments_count = std::ranges::distance(comments.begin(), comments.end());
-
-    return count - comments_count;
+    std::unordered_set<int> line_numbers;
+    auto lines_wo_comments = lines | std::views::filter([](auto &&str) { return !str.contains("(comment"); });
+    std::ranges::for_each(lines_wo_comments, [&line_numbers](const auto &line) {
+        auto start_line = get_start_line_number(line);
+        line_numbers.insert(start_line);
+    });
+    return line_numbers.size();
 }
 
 }  // namespace analyser::metric::metric_impl
