@@ -29,9 +29,9 @@ TEST(CodeLinesCountMetricTests, malformed_ast_throws_invalid_argument) {
     EXPECT_THROW(metric.Calculate(func), std::invalid_argument);
 }
 
-class CodeLinesCountFromTestFilesTest : public ::testing::TestWithParam<std::tuple<std::string, int>> {};
+class CodeLinesCountFromTestFiles : public ::testing::TestWithParam<std::tuple<std::string, int>> {};
 
-TEST_P(CodeLinesCountFromTestFilesTest, from_test_file) {
+TEST_P(CodeLinesCountFromTestFiles, from_test_file) {
     auto filename = std::get<0>(GetParam());
     auto count = std::get<1>(GetParam());
 
@@ -46,7 +46,7 @@ TEST_P(CodeLinesCountFromTestFilesTest, from_test_file) {
 }
 
 const static std::string filepath = "../src/metric_impl/tests/files/";
-INSTANTIATE_TEST_SUITE_P(_, CodeLinesCountFromTestFilesTest,
+INSTANTIATE_TEST_SUITE_P(_, CodeLinesCountFromTestFiles,
                          ::testing::Values(                                        //
                              std::make_tuple(filepath + "comments.py", 4),         //
                              std::make_tuple(filepath + "exceptions.py", 8),       //
