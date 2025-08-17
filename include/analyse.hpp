@@ -1,5 +1,9 @@
 #include <unistd.h>
 
+#include "file.hpp"
+#include "function.hpp"
+#include "metric.hpp"
+#include "metric_accumulator.hpp"
 #include <algorithm>
 #include <array>
 #include <cstdio>
@@ -17,19 +21,25 @@
 #include <variant>
 #include <vector>
 
-#include "file.hpp"
-#include "function.hpp"
-#include "metric.hpp"
-#include "metric_accumulator.hpp"
-
 namespace analyser {
 
 namespace rv = std::ranges::views;
 namespace rs = std::ranges;
 
-auto AnalyseFunctions(const std::vector<std::string> &files,
-                      const analyser::metric::MetricExtractor &metric_extractor) {
-    // здесь ваш код
+inline auto AnalyseFunctions(const std::vector<std::string> &files,
+                             const analyser::metric::MetricExtractor &metric_extractor) {
+
+    function::FunctionExtractor func_extractor;
+
+    auto analysis = files                                                                              //
+                    | rv::transform([](const std::string &filename) { return file::File(filename); })  //
+                    | rv::transform([&](auto &&file) { return func_extractor.Get(file); })             //
+                    | rv::join                                                                         //
+                    | rv::transform([&](auto &&func) {
+                          return std::make_pair(std::forward<decltype(func)>(func), metric_extractor.Get(func));
+                      });
+
+    return rs::to<std::vector<std::pair<function::Function, metric::MetricResults>>>(analysis);
 }
 
 auto SplitByClasses(const auto &analysis) {

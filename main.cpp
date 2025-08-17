@@ -1,5 +1,14 @@
 #include <unistd.h>
 
+#include "analyse.hpp"
+#include "cmd_options.hpp"
+#include "file.hpp"
+#include "function.hpp"
+#include "include/cmd_options.hpp"
+#include "metric.hpp"
+#include "metric_accumulator.hpp"
+#include "metric_accumulator_impl/accumulators.hpp"
+#include "metric_impl/metrics.hpp"
 #include <algorithm>
 #include <array>
 #include <cstdio>
@@ -17,25 +26,38 @@
 #include <variant>
 #include <vector>
 
-#include "analyse.hpp"
-#include "cmd_options.hpp"
-#include "file.hpp"
-#include "function.hpp"
-#include "include/cmd_options.hpp"
-#include "metric.hpp"
-#include "metric_accumulator.hpp"
-#include "metric_accumulator_impl/accumulators.hpp"
-#include "metric_impl/metrics.hpp"
-
 int main(int argc, char *argv[]) {
     analyser::cmd::ProgramOptions options;
-    // распарсите входные параметры
+    if (!options.Parse(argc, argv)) {
+        return EXIT_FAILURE;
+    }
 
-    // analyser::metric::MetricExtractor metric_extractor;
-    // зарегистрируйте метрики в metric_extractor
+    if (options.GetFiles().size() != 1) {
+        return EXIT_FAILURE;
+    }
 
-    // запустите analyser::AnalyseFunctions
-    // выведете результаты анализа на консоль
+    try {
+        analyser::metric::MetricExtractor metric_extractor;
+        metric_extractor.RegisterMetric(std::make_unique<analyser::metric::metric_impl::CodeLinesCountMetric>());
+        metric_extractor.RegisterMetric(std::make_unique<analyser::metric::metric_impl::CyclomaticComplexityMetric>());
+        metric_extractor.RegisterMetric(std::make_unique<analyser::metric::metric_impl::CountParametersMetric>());
+
+        auto analysis_results = analyser::AnalyseFunctions(options.GetFiles(), metric_extractor);
+
+        std::println("Analysis complete. Found {} functions.\n", analysis_results.size());
+        std::ranges::for_each(analysis_results, [](const auto &analysis) {
+            const auto &[func, metrics] = analysis;
+            std::println("Function: {} in file: {}", func.name, func.filename);
+            std::ranges::for_each(
+                metrics, [](const auto &result) { std::println("  - {}: {}", result.metric_name, result.value); });
+            std::println("");
+        });
+
+
+    } catch (const std::exception &e) {
+        std::println(stderr, "Error: {}", e.what());
+        return EXIT_FAILURE;
+    }
 
     // analyser::metric_accumulator::MetricsAccumulator accumulator;
     // зарегистрируйте аккумуляторы метрик в accumulator
