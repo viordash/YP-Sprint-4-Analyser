@@ -1,6 +1,6 @@
 #pragma once
-#include <unistd.h>
 #include "metric_accumulator.hpp"
+#include <unistd.h>
 
 namespace analyser::metric_accumulator::metric_accumulator_impl {
 
