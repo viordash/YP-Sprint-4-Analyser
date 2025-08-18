@@ -1,36 +1,20 @@
 #pragma once
-#include <unistd.h>
-
-#include <algorithm>
-#include <array>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <filesystem>
-#include <fstream>
-#include <functional>
-#include <iostream>
-#include <ranges>
-#include <sstream>
-#include <string>
-#include <variant>
-#include <vector>
-
 #include "metric_accumulator.hpp"
+#include <unistd.h>
 
 namespace analyser::metric_accumulator::metric_accumulator_impl {
 
-struct CategoricalAccumulator: public IAccumulator {
-    void Accumulate(const metric::MetricResult& metric_result) override;
+struct CategoricalAccumulator final : IAccumulator {
+    void Accumulate(const metric::MetricResult &metric_result) override;
 
-    virtual void Finalize() override;
+    void Finalize() override;
 
-    virtual void Reset() override;
+    void Reset() override;
 
-    const std::unordered_map<std::string, int>& Get() const;
+    const std::unordered_map<int, int> &Get() const;
 
 private:
-    std::unordered_map<std::string, int> categories_freq;
+    std::unordered_map<int, int> categories_freq;
 };
 
-} // namespace analyser::metric_accumulator::metric_accumulator_impl
+}  // namespace analyser::metric_accumulator::metric_accumulator_impl

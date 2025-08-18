@@ -1,24 +1,60 @@
 #include "metric_impl/code_lines_count.hpp"
-
-#include <unistd.h>
-
-#include <algorithm>
-#include <array>
+#include "utils.hpp"
+#include <cstddef>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <filesystem>
-#include <fstream>
-#include <functional>
-#include <iostream>
 #include <ranges>
-#include <sstream>
+#include <stdexcept>
 #include <string>
-#include <variant>
+#include <string_view>
+#include <unistd.h>
+#include <unordered_set>
 #include <vector>
 
 namespace analyser::metric::metric_impl {
 
-// здесь ваш код
+std::string CodeLinesCountMetric::Name() const { return "CodeLinesCount"; }
+
+namespace {
+int get_start_line_number(std::string_view ast) {
+    auto start_pos = ast.find('[');
+    if (start_pos == std::string::npos) {
+        throw std::invalid_argument{"Invalid AST, not found '['"};
+    }
+
+    auto end_pos = ast.find(']', start_pos);
+    if (end_pos == std::string::npos) {
+        throw std::invalid_argument{"Invalid AST, not found ']'"};
+    }
+
+    std::string_view coord_sv(ast.data() + start_pos + 1, end_pos - start_pos - 1);
+    size_t comma_pos = coord_sv.find(',');
+    if (comma_pos == std::string_view::npos) {
+        throw std::invalid_argument{"Invalid AST, not found comma"};
+    }
+    std::string_view start_sv(coord_sv.data(), comma_pos);
+    int line_number = ToInt(start_sv.substr(0, comma_pos));
+
+    return line_number;
+}
+}  // namespace
+
+MetricResult::ValueType CodeLinesCountMetric::CalculateImpl(const function::Function &f) const {
+    auto lines = f.ast | std::views::split('\n')                                        //
+                 | std::views::transform([](auto &&r) { return std::string_view{r}; })  //
+                 | std::ranges::to<std::vector>();
+    if (lines.size() < 1) {
+        throw std::invalid_argument{"Invalid AST, empty string"};
+    }
+
+    std::unordered_set<int> line_numbers;
+    auto lines_wo_comments = lines | std::views::filter([](auto &&str) { return !str.contains("(comment"); });
+    std::ranges::for_each(lines_wo_comments, [&line_numbers](const auto &line) {
+        auto start_line = get_start_line_number(line);
+        line_numbers.insert(start_line);
+    });
+    return line_numbers.size();
+}
 
 }  // namespace analyser::metric::metric_impl
